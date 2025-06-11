@@ -20,6 +20,12 @@ app = Flask(
 def serve_index():
     return send_from_directory(os.path.join(BASE_DIR, '../front-end'), 'index.html')
 
+@app.route('/your-backend-api', methods=['POST'])
+def your_backend_api():
+    api_key = request.form.get('api_key')
+    # 这里可以添加你需要的处理逻辑
+    return jsonify({'message': 'API key received', 'api_key': api_key})
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     # 支持多文件上传
@@ -67,18 +73,20 @@ def download_result():
 def generate_excel():
     data = request.json
     headers = data.get('headers', [])
+    api_key = data.get('api_key', None)
     if not headers or not isinstance(headers, list):
         return jsonify({'error': 'Invalid headers'}), 400
+    if not api_key:
+        return jsonify({'error': 'API key is required'}), 400
 
     rows = []
     for filename in os.listdir(LITERATURE_FOLDER):
         if filename.endswith('.pdf'):
             file_path = os.path.join(LITERATURE_FOLDER, filename)
             try:
-                row = process_literature(file_path, headers)
+                row = process_literature(file_path, api_key, headers)
                 rows.append(row)
             except Exception as e:
-                # 处理失败时填充错误信息
                 error_row = [f"{filename} 处理失败: {str(e)}"] + [""] * (len(headers) - 1)
                 rows.append(error_row)
             time.sleep(60)  # 每处理一个文件等待30秒

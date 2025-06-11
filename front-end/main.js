@@ -116,6 +116,11 @@ window.addEventListener('DOMContentLoaded', () => {
             showMsg('请先选择文件');
             return;
         }
+        const apiKey = document.getElementById('apiKeyInput').value.trim();
+        if (!apiKey) {
+            showMsg('请填写API Key');
+            return;
+        }
         const headerInputs = headersContainer.querySelectorAll('.header-input');
         const headers = Array.from(headerInputs).map(input => input.value.trim()).filter(Boolean);
         if (headers.length === 0) {
@@ -125,6 +130,7 @@ window.addEventListener('DOMContentLoaded', () => {
         // 先上传文件
         const formData = new FormData();
         files.forEach(f => formData.append('files', f));
+        formData.append('api_key', apiKey); // 加入API Key
         fetch('/upload', {
             method: 'POST',
             body: formData
@@ -139,7 +145,7 @@ window.addEventListener('DOMContentLoaded', () => {
             return fetch('/generate_excel', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ headers })
+                body: JSON.stringify({ headers, api_key: apiKey }) // 修正这里
             });
         })
         .then(res => res && res.json())

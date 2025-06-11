@@ -4,10 +4,9 @@ from openpyxl import Workbook
 import json
 import os
 
-def process_literature(file_path, headers=None):
-    # 初始化 OpenAI 客户端
+def process_literature(file_path, api_key, headers=None):
     client = OpenAI(
-        api_key="sk-BvBtk34mZJ3FBqi82F9EBIjmkNIy4jsbCHjgCC0r8STKMtY5",
+        api_key=api_key,
         base_url="https://api.moonshot.cn/v1",
     )
 
@@ -17,13 +16,6 @@ def process_literature(file_path, headers=None):
     # 获取文件内容
     file_content = client.files.content(file_id=file_object.id).text
 
-    # 默认headers
-    if headers is None:
-        headers = [
-            "文件名", "作者", "发表年份", "研究区域", "研究目标", "数据源", "研究方法", "时间跨度", "空间尺度", "光污染水平",
-            "变化趋势", "测量指标", "数据类型", "主要驱动力", "边界效应", "区域差异", "保护区类型", "地理特征",
-            "主要结论", "创新点", "局限性", "管理建议", "分析技术", "模型方法", "验证方式", "精度评估"
-        ]
 
     # 构建动态提取字段的 prompt
     fields_str = "、".join(headers)
@@ -73,6 +65,15 @@ def process_literature(file_path, headers=None):
 
     print(json.dumps(row_data, ensure_ascii=False))
     return row_data
+
+@app.route('/your-backend-api', methods=['POST'])
+def upload_and_process():
+    file = request.files['file']
+    api_key = request.form['api_key']
+    file_path = f"/tmp/{file.filename}"
+    file.save(file_path)
+    result = process_literature(file_path, api_key=api_key)
+    return {"result": result}
 
 if __name__ == "__main__":
     # 仅在直接运行此文件时使用默认路径
