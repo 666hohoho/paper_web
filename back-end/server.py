@@ -18,17 +18,22 @@ def serve_index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'file' not in request.files:
+    # 支持多文件上传
+    if 'files' not in request.files:
         return jsonify({'error': 'No file part'}), 400
-    file = request.files['file']
-    if file.filename == '':
+    files = request.files.getlist('files')
+    if not files or all(f.filename == '' for f in files):
         return jsonify({'error': 'No selected file'}), 400
     # 确保 literature 文件夹存在
     if not os.path.exists(LITERATURE_FOLDER):
         os.makedirs(LITERATURE_FOLDER)
-    save_path = os.path.join(LITERATURE_FOLDER, file.filename)
-    file.save(save_path)
-    return jsonify({'message': 'File uploaded successfully', 'filename': file.filename})
+    saved_filenames = []
+    for file in files:
+        if file and file.filename:
+            save_path = os.path.join(LITERATURE_FOLDER, file.filename)
+            file.save(save_path)
+            saved_filenames.append(file.filename)
+    return jsonify({'message': 'Files uploaded successfully', 'filenames': saved_filenames})
 
 @app.route('/run', methods=['POST'])
 def run_multi():
