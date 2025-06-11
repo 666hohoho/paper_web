@@ -4,6 +4,7 @@ import subprocess
 import pandas as pd
 from min import process_literature
 import time
+import shutil
 
 # 路径统一
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -97,6 +98,22 @@ def generate_excel():
         os.makedirs(result_dir)
     df.to_excel(RESULT_FILE, index=False)
     return jsonify({'message': 'Excel file generated', 'headers': headers})
+
+@app.route('/clear_folders', methods=['POST'])
+def clear_folders():
+    for folder in ['literature', 'results']:
+        folder_path = os.path.join(os.getcwd(), folder)
+        if os.path.exists(folder_path):
+            for filename in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception:
+                    pass
+    return '', 204
 
 if __name__ == '__main__':
     if not os.path.exists(LITERATURE_FOLDER):

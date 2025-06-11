@@ -194,3 +194,8 @@ window.addEventListener('DOMContentLoaded', () => {
         table.innerHTML = thead + rows;
     }
 });
+
+window.addEventListener('beforeunload', () => {
+    // 通知后端清理文件夹
+    navigator.sendBeacon('/clear_folders');
+});

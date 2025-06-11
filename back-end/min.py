@@ -66,15 +66,6 @@ def process_literature(file_path, api_key, headers=None):
     print(json.dumps(row_data, ensure_ascii=False))
     return row_data
 
-@app.route('/your-backend-api', methods=['POST'])
-def upload_and_process():
-    file = request.files['file']
-    api_key = request.form['api_key']
-    file_path = f"/tmp/{file.filename}"
-    file.save(file_path)
-    result = process_literature(file_path, api_key=api_key)
-    return {"result": result}
-
 if __name__ == "__main__":
     # 仅在直接运行此文件时使用默认路径
     default_file_path = os.path.join(os.path.dirname(__file__), 'literature', 'test.pdf')
