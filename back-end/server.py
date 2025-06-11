@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, send_file, send_from_directory
 import os
 import subprocess
 import pandas as pd
+from min import process_literature
+import time
 
 # 路径统一
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -51,6 +53,33 @@ def download_result():
     if not os.path.exists(RESULT_FILE):
         return jsonify({'error': 'Result file not found'}), 404
     return send_file(RESULT_FILE, as_attachment=True)
+
+@app.route('/generate_excel', methods=['POST'])
+def generate_excel():
+    data = request.json
+    headers = data.get('headers', [])
+    if not headers or not isinstance(headers, list):
+        return jsonify({'error': 'Invalid headers'}), 400
+
+    rows = []
+    for filename in os.listdir(LITERATURE_FOLDER):
+        if filename.endswith('.pdf'):
+            file_path = os.path.join(LITERATURE_FOLDER, filename)
+            try:
+                row = process_literature(file_path, headers)
+                rows.append(row)
+            except Exception as e:
+                # 处理失败时填充错误信息
+                error_row = [f"{filename} 处理失败: {str(e)}"] + [""] * (len(headers) - 1)
+                rows.append(error_row)
+            time.sleep(60)  # 每处理一个文件等待30秒
+
+    df = pd.DataFrame(rows, columns=headers)
+    result_dir = os.path.dirname(RESULT_FILE)
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
+    df.to_excel(RESULT_FILE, index=False)
+    return jsonify({'message': 'Excel file generated', 'headers': headers})
 
 if __name__ == '__main__':
     if not os.path.exists(LITERATURE_FOLDER):

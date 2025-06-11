@@ -19,6 +19,9 @@
     <h2>文献上传与处理</h2>
     <input type="file" id="fileInput" />
     <button class="btn" onclick="uploadFile()">上传文件</button>
+    <br>
+    <label for="headersInput">表头（用英文逗号分隔）:</label>
+    <input type="text" id="headersInput" placeholder="如: 文件名,作者,年份" style="width:100%;margin-bottom:8px;" />
     <button class="btn" onclick="runMulti()">运行处理</button>
     <button class="btn" onclick="getResult()">查看结果</button>
     <button class="btn" onclick="downloadExcel()">下载Excel</button>
@@ -47,7 +50,17 @@ function uploadFile() {
 }
 
 function runMulti() {
-    fetch('/run', { method: 'POST' })
+    const headersStr = document.getElementById('headersInput').value.trim();
+    if (!headersStr) {
+        showMsg('请填写表头');
+        return;
+    }
+    const headers = headersStr.split(',').map(h => h.trim()).filter(h => h);
+    fetch('/generate_excel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ headers })
+    })
     .then(res => res.json())
     .then(data => {
         if (data.error) showMsg('运行失败: ' + data.error);
