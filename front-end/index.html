@@ -3,112 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>文献处理平台</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .container { max-width: 600px; margin: auto; }
-        h2 { color: #2c3e50; }
-        #result-table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        #result-table th, #result-table td { border: 1px solid #ddd; padding: 8px; }
-        #result-table th { background: #f4f4f4; }
-        .btn { padding: 8px 16px; margin: 8px 0; background: #3498db; color: #fff; border: none; cursor: pointer; border-radius: 4px; }
-        .btn:disabled { background: #aaa; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
     <h2>文献上传与处理</h2>
     <input type="file" id="fileInput" multiple />
-    <button class="btn" onclick="uploadFile()">上传文件</button>
+    <button class="btn" id="uploadBtn">上传文件</button>
     <br>
     <label for="headersInput">表头（用英文逗号分隔）:</label>
-    <input type="text" id="headersInput" placeholder="如: 文件名,作者,年份" style="width:100%;margin-bottom:8px;" />
-    <button class="btn" onclick="runMulti()">运行处理</button>
-    <button class="btn" onclick="getResult()">查看结果</button>
-    <button class="btn" onclick="downloadExcel()">下载Excel</button>
+    <input type="text" id="headersInput" placeholder="如: 文件名,作者,年份" />
+    <div class="btn-group">
+        <button class="btn" id="runBtn">运行处理</button>
+        <button class="btn" id="resultBtn">查看结果</button>
+        <button class="btn" id="downloadBtn">下载Excel</button>
+    </div>
     <div id="msg"></div>
     <table id="result-table"></table>
 </div>
-<script>
-function uploadFile() {
-    const fileInput = document.getElementById('fileInput');
-    if (!fileInput.files.length) {
-        showMsg('请先选择文件');
-        return;
-    }
-    const formData = new FormData();
-    // 支持多文件
-    for (let i = 0; i < fileInput.files.length; i++) {
-        formData.append('files', fileInput.files[i]);
-    }
-    fetch('/upload', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.error) showMsg('上传失败: ' + data.error);
-        else if (data.filenames) showMsg('上传成功: ' + data.filenames.join(', '));
-        else showMsg('上传成功');
-    })
-    .catch(() => showMsg('上传出错'));
-}
-
-function runMulti() {
-    const headersStr = document.getElementById('headersInput').value.trim();
-    if (!headersStr) {
-        showMsg('请填写表头');
-        return;
-    }
-    const headers = headersStr.split(',').map(h => h.trim()).filter(h => h);
-    fetch('/generate_excel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ headers })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.error) showMsg('运行失败: ' + data.error);
-        else showMsg('处理完成');
-    })
-    .catch(() => showMsg('运行出错'));
-}
-
-function getResult() {
-    fetch('/result')
-    .then(res => res.json())
-    .then(data => {
-        if (data.error) {
-            showMsg('未找到结果: ' + data.error);
-            return;
-        }
-        renderTable(data);
-        showMsg('结果已展示');
-    })
-    .catch(() => showMsg('获取结果出错'));
-}
-
-function downloadExcel() {
-    window.open('/download', '_blank');
-}
-
-function showMsg(msg) {
-    document.getElementById('msg').innerText = msg;
-}
-
-function renderTable(data) {
-    const table = document.getElementById('result-table');
-    table.innerHTML = '';
-    if (!Array.isArray(data) || data.length === 0) {
-        table.innerHTML = '<tr><td>无数据</td></tr>';
-        return;
-    }
-    // 表头
-    const header = Object.keys(data[0]);
-    let thead = '<tr>' + header.map(h => `<th>${h}</th>`).join('') + '</tr>';
-    // 数据行
-    let rows = data.map(row => '<tr>' + header.map(h => `<td>${row[h]}</td>`).join('') + '</tr>').join('');
-    table.innerHTML = thead + rows;
-}
-</script>
+<script src="main.js"></script>
 </body>
 </html>

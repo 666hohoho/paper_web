@@ -1,0 +1,65 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+    background: #f9f9fb;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: #fff;
+    padding: 32px 40px 40px 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 16px rgba(44,62,80,0.08);
+}
+h2 {
+    color: #2c3e50;
+    margin-bottom: 24px;
+}
+#result-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    font-size: 15px;
+}
+#result-table th, #result-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    word-break: break-all;
+}
+#result-table th {
+    background: #f4f4f4;
+}
+.btn {
+    padding: 8px 20px;
+    margin: 8px 8px 8px 0;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+.btn:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+.btn:hover:not(:disabled) {
+    background: #217dbb;
+}
+#headersInput {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+}
+#msg {
+    margin: 12px 0 0 0;
+    color: #e67e22;
+    min-height: 22px;
+}
+.btn-group {
+    margin-bottom: 10px;
+}

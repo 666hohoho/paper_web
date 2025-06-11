@@ -10,7 +10,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LITERATURE_FOLDER = os.path.join(BASE_DIR, 'literature')
 RESULT_FILE = os.path.join(BASE_DIR, 'results', 'literature_summary.xlsx')
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder='../front-end',      # 指定静态文件目录
+    static_url_path=''                 # 让 /style.css 直接映射到静态目录
+)
 
 @app.route('/')
 def serve_index():
