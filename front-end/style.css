@@ -1,65 +1,175 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-    background: #f9f9fb;
+    font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    background: #fafbfc;
+    margin: 0;
+    padding: 0;
 }
 .container {
     max-width: 700px;
-    margin: auto;
-    background: #fff;
-    padding: 32px 40px 40px 40px;
+    margin: 40px auto;
+    background: #fafbfc;
     border-radius: 10px;
-    box-shadow: 0 2px 16px rgba(44,62,80,0.08);
+    padding: 32px 36px 24px 36px;
 }
 h2 {
-    color: #2c3e50;
     margin-bottom: 24px;
 }
-#result-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 20px;
+.upload-area {
+    border: 2px dashed #d9d9d9;
+    border-radius: 8px;
+    background: #fafbfc;
+    text-align: center;
+    padding: 40px 0 32px 0;
+    margin-bottom: 24px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.upload-area.dragover {
+    border-color: #409eff;
+    background: #f0f7ff;
+}
+.upload-tip {
+    color: #aaa;
     font-size: 15px;
+    display: block;
+    margin-top: 8px;
 }
-#result-table th, #result-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    word-break: break-all;
+.file-list {
+    margin-bottom: 18px;
 }
-#result-table th {
-    background: #f4f4f4;
+.file-item {
+    background: #f7f9fa;
+    border-radius: 6px;
+    padding: 18px 16px 12px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    box-shadow: 0 1px 3px #0001;
+}
+.file-status {
+    color: #409eff;
+    font-size: 14px;
+    margin-left: 8px;
+}
+.file-remove {
+    color: #f56c6c;
+    font-size: 22px;
+    cursor: pointer;
+    margin-left: 18px;
+    user-select: none;
+    transition: color 0.2s;
+}
+.file-remove:hover {
+    color: #d93026;
+}
+.btn-group {
+    position: fixed;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 24px;
+    background: #fff;
+    padding: 18px 32px;
+    border-radius: 12px;
+    box-shadow: 0;
+    z-index: 100;
+    margin: 0; /* 去除原有 margin */
 }
 .btn {
-    padding: 8px 20px;
-    margin: 8px 8px 8px 0;
-    background: #3498db;
+    background: #409eff;
     color: #fff;
     border: none;
-    cursor: pointer;
-    border-radius: 4px;
+    border-radius: 5px;
+    padding: 8px 22px;
+    margin-right: 12px;
     font-size: 15px;
+    cursor: pointer;
     transition: background 0.2s;
 }
-.btn:disabled {
-    background: #aaa;
-    cursor: not-allowed;
+.btn:hover {
+    background: #337ecc;
 }
-.btn:hover:not(:disabled) {
-    background: #217dbb;
-}
-#headersInput {
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+input[type="text"] {
+    padding: 10px 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    margin: 0 0 0 0;
+    width: 60%;
     font-size: 15px;
 }
 #msg {
-    margin: 12px 0 0 0;
-    color: #e67e22;
-    min-height: 22px;
+    margin: 10px 0;
+    color: #f56c6c;
 }
-.btn-group {
-    margin-bottom: 10px;
+.headers-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin: 18px 0 24px 0;
+    align-items: center; /* 垂直居中对齐 */
+}
+.header-card {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    width: 180px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    box-shadow: none;
+    transition: border-color 0.2s;
+}
+.header-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 22px;
+    text-align: center;
+    width: 90%;
+    color: #222;
+    margin: 0;
+    padding: 0 0px 0px 0; /* 右侧内边距加大到28px，左侧为0 */
+}
+.header-input::placeholder {
+    color: #aaa;
+    font-weight: 400;
+}
+.header-remove {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    color: #bbb;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 2;
+}
+.header-remove:hover {
+    color: #f56c6c;
+}
+.add-header-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #409eff;
+    color: #fff;
+    font-size: 28px;
+    margin-left: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #0001;
+    transition: background 0.2s;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.add-header-btn:hover {
+    background: #337ecc;
 }
