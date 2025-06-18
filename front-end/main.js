@@ -1,4 +1,4 @@
-//API相关
+//API相关--------------------------------------------------------------------------
 function showAPIPopup() {
     document.getElementById('api-popup').style.display = 'block';
     document.getElementById('apiTypeInput').value = apiConfig.Type;
@@ -43,7 +43,13 @@ function testConnection() {
     });
 }
 
-//上传文件
+document.getElementById('close-api-popup').addEventListener('click', function() {
+        document.getElementById('api-popup').style.display = 'none';
+    });
+
+
+
+//上传文件---------------------------------------------------------------------------
 // 绑定 change 事件监听器
 let files = [];
 document.getElementById('fileInput').addEventListener('change', async (event) => {
@@ -67,7 +73,7 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:5002/upload', {
+        const response = await fetch('/upload', {
             method: 'POST',
             body: formData,
         });
@@ -104,7 +110,7 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
                 console.log('Deleting file:', fileName);
 
                 // 发送删除请求到后端
-                const response = await fetch('http://127.0.0.1:5002/delete', {
+                const response = await fetch('/delete', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -149,7 +155,12 @@ function onFileSelected(event) {
 
 
 
-//添加字段
+//添加字段----------------------------------------------------------------------------
+function showFieldsIn() {
+        const headersContainer = document.getElementById('headersContainer');
+        headersContainer.style.display = headersContainer.style.display = 'block' ;
+    }
+
 const headersContainer = document.getElementById('headersContainer');
 const addHeaderBtn = document.getElementById('addHeaderBtn');
 
@@ -185,28 +196,27 @@ function addHeaderInput(value = '') {
 
 addHeaderBtn.onclick = () => addHeaderInput();
 
+document.getElementById('close-fields-popup').addEventListener('click', function() {
+        document.getElementById('headersContainer').style.display = 'none';
+    });
 
-// 运行处理
-document.getElementById('runBtn').onclick = () => {
+
+// 运行处理----------------------------------------------------------------------------
+document.getElementById('runBtn').addEventListener('click', function ()  {
     const apiType = document.getElementById('apiTypeInput').value.trim();
     const apiKey = document.getElementById('apiKeyInput').value.trim();
     const apiHost = document.getElementById('apiHostInput').value.trim();
     const headerInputs = headersContainer.querySelectorAll('.header-input');
     const headers = Array.from(headerInputs).map(input => input.value.trim()).filter(Boolean);
+    console.log('API Type:', apiType);
+    console.log('API Key:', apiKey);
+    console.log('API Host:', apiHost);
+    console.log('Headers:', headers);
 
-    if (!apiKey) {
-        showMsg('请填写API Key');
+    if (!apiKey || !apiHost || headers.length === 0) {
+        console.log('请填写所有必填项');
         return;
-    }
-    if (!apiHost) {
-        showMsg('请填写API Host');
-        return;
-    }
-    if (headers.length === 0) {
-        showMsg('请填写至少一个表头');
-        return;
-    }
-
+    } 
     // 请求后端处理
     fetch('/generate_excel', {
         method: 'POST',
@@ -222,10 +232,10 @@ document.getElementById('runBtn').onclick = () => {
         }
     })
     .catch(() => showMsg('运行出错'));
-};
+});
 
 
-// 查看结果
+// 查看结果----------------------------------------------------------------------------
 document.getElementById('resultBtn').onclick = () => {
     fetch('/result')
         .then(res => res.json())
@@ -276,12 +286,44 @@ function renderTable(data) {
     resultTable.appendChild(tbody);
 }
 
-// 下载Excel
+// 下载Excel----------------------------------------------------------------------------
 document.getElementById('downloadBtn').onclick = () => {
     window.open('/download', '_blank');
 };
 
-//页面关闭时自动清空文件夹
+//页面关闭时自动清空文件夹-----------------------------------------------------------------
 window.addEventListener('beforeunload', () => {
     navigator.sendBeacon('/clear_folders');
 });
+
+
+//按钮状态更新----------------------------------------------------------------------------
+
+apiKeyInput.addEventListener('input', updateButtonStates);
+apiHostInput.addEventListener('input', updateButtonStates);
+const checkElementsExist = setInterval(() => {
+    updateButtonStates();
+}, 1000); // 每 1000 毫秒检查一次
+
+function updateButtonStates() {
+    const runBtn = document.getElementById('runBtn');
+    const resultBtn = document.getElementById('resultBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    const apiKeyInput = document.getElementById('apiKeyInput').value.trim();
+    const apiHostInput = document.getElementById('apiHostInput').value.trim();
+    const headerInput = document.querySelector('.header-input').value.trim(); // 选择第一个具有 header-input 类的元素
+    const fileItem = document.querySelector('.file-item').textContent.trim(); // 选择第一个具有 file-item 类的元素
+
+    if (!apiKeyInput || !apiHostInput || !headerInput || !fileItem) {
+        runBtn.classList.add('disabled');
+        resultBtn.classList.add('disabled');
+        downloadBtn.classList.add('disabled');
+        return;
+    }else {
+        // Enable buttons
+        runBtn.classList.remove('disabled');
+        resultBtn.classList.remove('disabled');
+        downloadBtn.classList.remove('disabled');
+    }
+    }

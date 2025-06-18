@@ -18,16 +18,17 @@
             <div class="upload-hint">最大支持 10MB</div>
         </div>
         <input type="file" id="fileInput" style="display: none;" multiple>
-        <button class="btn" id="fieldsIn">添加字段</button><br>
-        <button class="btn" id="runBtn">运行处理</button><br>
-        <button class="btn" id="resultBtn">查看结果</button><br>
-        <button class="btn" id="downloadBtn">下载Excel</button>
+        <button class="btn" id="fieldsIn" onclick="showFieldsIn()">添加字段</button><br>
+        <button class="btn disabled" id="runBtn">运行处理</button><br>
+        <button class="btn disabled" id="resultBtn">查看结果</button><br>
+        <button class="btn disabled" id="downloadBtn">下载Excel</button>
     </div>
 
     <div id="right">
         <image src="content/start.png" alt="文献处理平台 Logo" id="logo">
         <!-- API 配置弹窗 -->
         <div id="api-popup" style="display: none">
+            <button id="close-api-popup" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
             <div id="apiTypeArea">
                 <label for="apiTypeInput">API Type：</label>
                 <select id="apiTypeInput">
@@ -44,12 +45,13 @@
                 <input type="text" id="apiKeyInput" placeholder="请输入API Key" />
             </div>
             <button class="test-button" onclick="testConnection()">测试连接</button>
+            <div id="msg"></div>
         </div>
-        <div id="msg"></div>
         <!-- 文件列表 -->
         <div id="fileList" class="file-list" ></div>
         <!-- 字段选择区域 -->
-        <div class="headers-container" id="headersContainer">
+        <div class="headers-container" id="headersContainer" style="display: none">
+            <button id="close-fields-popup" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
             <button type="button" class="add-header-btn" id="addHeaderBtn" title="添加表头">+</button>
         </div>
         <!-- 结果表格 -->
@@ -58,5 +60,10 @@
 
 </div>
 <script src="main.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        updateButtonStates();
+    });
+</script>
 </body>
 </html>

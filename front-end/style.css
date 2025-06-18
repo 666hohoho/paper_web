@@ -40,6 +40,20 @@ body {
     margin: 10px;
 }
 
+.btn.disabled {
+    background: #414f5a;
+    color: white;
+    border: none;
+    width: 80%;
+    height: 60px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    margin: 10px;
+}
+
 .upload-area {
     border: 2px dashed #e2e8f0;
     border-radius: 12px;
@@ -89,3 +103,15 @@ body {
     color: red;
     cursor: pointer;
 }
+
+
+/* 表头 相关*/
+.headers-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #5a9fd4;
+    padding: 30px;
+    border-radius: 15px;
+    }
