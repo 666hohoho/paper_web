@@ -28,6 +28,13 @@
         <image src="content/start.png" alt="文献处理平台 Logo" id="logo">
         <!-- API 配置弹窗 -->
         <div id="api-popup" style="display: none">
+            <div id="apiTypeArea">
+                <label for="apiTypeInput">API Type：</label>
+                <select id="apiTypeInput">
+                    <option value="Moonshot">Moonshot</option>
+                    <option value="OpenAI">OpenAI</option>
+                </select>
+            </div>
             <div id="apiHostArea">
                 <label for="apiHostInput">API Host：</label>
                 <input type="url" id="apiHostInput" placeholder="请输入API 主机" />

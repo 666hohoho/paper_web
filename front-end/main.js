@@ -1,12 +1,14 @@
 //API相关
 function showAPIPopup() {
     document.getElementById('api-popup').style.display = 'block';
+    document.getElementById('apiTypeInput').value = apiConfig.Type;
     document.getElementById('apiHostInput').value = apiConfig.host;
     document.getElementById('apiKeyInput').value = apiConfig.key;
 }
 
 function testConnection() {
     // 获取输入框的值
+    const apiType = document.getElementById('apiTypeInput').value; 
     const apiHost = document.getElementById('apiHostInput').value;
     const apiKey = document.getElementById('apiKeyInput').value;
 
@@ -17,6 +19,7 @@ function testConnection() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+            api_type: apiType,
             api_host: apiHost,
             api_key: apiKey
         })
@@ -185,6 +188,7 @@ addHeaderBtn.onclick = () => addHeaderInput();
 
 // 运行处理
 document.getElementById('runBtn').onclick = () => {
+    const apiType = document.getElementById('apiTypeInput').value.trim();
     const apiKey = document.getElementById('apiKeyInput').value.trim();
     const apiHost = document.getElementById('apiHostInput').value.trim();
     const headerInputs = headersContainer.querySelectorAll('.header-input');
@@ -207,7 +211,7 @@ document.getElementById('runBtn').onclick = () => {
     fetch('/generate_excel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ headers, api_key: apiKey, api_host: apiHost })
+        body: JSON.stringify({ headers, api_type: apiType, api_key: apiKey, api_host: apiHost })
     })
     .then(res => res.json())
     .then(data => {

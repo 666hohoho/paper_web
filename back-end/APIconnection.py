@@ -7,7 +7,7 @@ def test_moonshot_connection(api_host, api_key):
         }
         
         resp = httpx.post(
-            f"{api_host}/chat/completions",
+            f"{api_host}/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
@@ -23,7 +23,7 @@ def test_moonshot_connection(api_host, api_key):
     except Exception as e:
         return False, f"Moonshot API连接错误: {str(e)}"
 
-def test_openai_connection(api_key):
+def test_openai_connection(api_host, api_key):
     try:
         test_data = {
             "messages": [{"role": "user", "content": "Hello"}],
@@ -31,7 +31,7 @@ def test_openai_connection(api_key):
         }
         
         resp = httpx.post(
-            "https://api.openai.com/v1/chat/completions",
+            f"{api_host}/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"

@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify, send_file, send_from_directory
 import os
 import subprocess
 import pandas as pd
-from min import process_literature
-from test_API import test_moonshot_connection, test_openai_connection
+from prompt import process_literature
+from APIconnection import test_moonshot_connection, test_openai_connection
 import time
 import shutil
 import requests
@@ -50,15 +50,15 @@ def test_connection():
             "message": "API key is required"
         }), 400
 
-    if api_type == 'moonshot':
+    if api_type == 'Moonshot':
         if not api_host:
             return jsonify({
                 "success": False,
                 "message": "Moonshot API host is required"
             }), 400
         success, message = test_moonshot_connection(api_host, api_key)
-    elif api_type == 'openai':
-        success, message = test_openai_connection(api_key)
+    elif api_type == 'OpenAI':
+        success, message = test_openai_connection(api_host,api_key)
     else:
         return jsonify({
             "success": False,
@@ -131,6 +131,7 @@ def download_result():
 def generate_excel():
     data = request.json
     headers = data.get('headers', [])
+    api_type = data.get('api_type', 'moonshot') 
     api_key = data.get('api_key', None)
     api_host = data.get('api_host', None)
     if not headers or not isinstance(headers, list):
@@ -145,7 +146,7 @@ def generate_excel():
         if filename.endswith('.pdf'):
             file_path = os.path.join(LITERATURE_FOLDER, filename)
             try:
-                row = process_literature(file_path, api_host, api_key, headers)
+                row = process_literature(file_path, api_type, api_host, api_key, headers)
                 row.insert(0, filename)
                 rows.append(row)
             except Exception as e:
