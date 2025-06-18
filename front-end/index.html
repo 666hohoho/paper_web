@@ -6,30 +6,49 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <div id="apiKeyArea">
-      <label for="apiKeyInput">API Key：</label>
-      <input type="text" id="apiKeyInput" placeholder="请输入API Key" />
-    </div>
-    <h2>文件上传</h2>
-    <div class="upload-area" id="uploadArea">
-        <p>点击或拖拽文件到此处</p>
-        <span class="upload-tip">支持 PDF、DOC、DOCX 格式</span>
-        <input type="file" id="fileInput" multiple style="display:none;" />
-    </div>
-    <div id="fileList" class="file-list"></div>
-    <br>
-    <label style="font-weight:600;">表头：</label>
-    <div class="headers-container" id="headersContainer">
-        <button type="button" class="add-header-btn" id="addHeaderBtn" title="添加表头">+</button>
-    </div>
-    <div class="btn-group">
-        <button class="btn" id="runBtn">运行处理</button>
-        <button class="btn" id="resultBtn">查看结果</button>
+<div id="container">
+
+    <div id="left">
+        <button class="btn" id="api" onclick="showAPIPopup()">API</button><br>
+        <div class="upload-area" id="uploadArea" onclick="handleFileUpload()">
+            <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <div class="upload-text">点击添加文件</div>
+            <div class="upload-hint">最大支持 10MB</div>
+        </div>
+        <input type="file" id="fileInput" style="display: none;" multiple>
+        <button class="btn" id="fieldsIn">添加字段</button><br>
+        <button class="btn" id="runBtn">运行处理</button><br>
+        <button class="btn" id="resultBtn">查看结果</button><br>
         <button class="btn" id="downloadBtn">下载Excel</button>
     </div>
-    <div id="msg"></div>
-    <table id="result-table"></table>
+
+    <div id="right">
+        <image src="content/start.png" alt="文献处理平台 Logo" id="logo">
+        <!-- API 配置弹窗 -->
+        <div id="api-popup" style="display: none">
+            <div id="apiHostArea">
+                <label for="apiHostInput">API Host：</label>
+                <input type="url" id="apiHostInput" placeholder="请输入API 主机" />
+            </div>
+            <div id="apiKeyArea">
+                <label for="apiKeyInput">API Key：</label>
+                <input type="text" id="apiKeyInput" placeholder="请输入API Key" />
+            </div>
+            <button class="test-button" onclick="testConnection()">测试连接</button>
+        </div>
+        <div id="msg"></div>
+        <!-- 文件列表 -->
+        <div id="fileList" class="file-list" ></div>
+        <!-- 字段选择区域 -->
+        <div class="headers-container" id="headersContainer">
+            <button type="button" class="add-header-btn" id="addHeaderBtn" title="添加表头">+</button>
+        </div>
+        <!-- 结果表格 -->
+        <table id="result-table"></table>
+    </div>
+
 </div>
 <script src="main.js"></script>
 </body>

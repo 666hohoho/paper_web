@@ -4,10 +4,10 @@ from openpyxl import Workbook
 import json
 import os
 
-def process_literature(file_path, api_key, headers=None):
+def process_literature(file_path, api_host, api_key, headers=None):
     client = OpenAI(
         api_key=api_key,
-        base_url="https://api.moonshot.cn/v1",
+        base_url=api_host,
     )
 
     # 上传文件到 API
@@ -24,7 +24,7 @@ def process_literature(file_path, api_key, headers=None):
     messages = [
         {
             "role": "system",
-            "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。",
+            "content": "你是AI人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。",
         },
         {
             "role": "system",
