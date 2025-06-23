@@ -9,40 +9,52 @@
 <div id="container">
 
     <div id="left">
-        <button class="btn" id="api" onclick="showAPIPopup()">API</button><br>
-        <div class="upload-area" id="uploadArea" onclick="handleFileUpload()">
-            <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
-            <div class="upload-text">点击添加文件</div>
-            <div class="upload-hint">最大支持 10MB</div>
-        </div>
+        <button class="btn" id="api" onclick="showAPIPopup()">
+            <div class="icon api-icon" style="--icon-normal: url('content/API.svg'); --icon-active: url('content/API-active.svg')"></div>
+            <span class="text">API</span>
+        </button><br>
+        <button class="btn" id="uploadArea" onclick="handleFileUpload()">
+            <div class="icon upload-icon" style="--icon-normal: url('content/upload.svg'); --icon-active: url('content/upload-active.svg')"></div>
+            <span class="text">上传文件</span>
+        </button><br>
         <input type="file" id="fileInput" style="display: none;" multiple>
-        <button class="btn" id="fieldsIn" onclick="showFieldsIn()">添加字段</button><br>
-        <button class="btn disabled" id="runBtn">运行处理</button><br>
-        <button class="btn disabled" id="resultBtn">查看结果</button><br>
-        <button class="btn disabled" id="downloadBtn">下载Excel</button>
+        <button class="btn" id="fieldsIn" onclick="showFieldsIn()">
+            <div class="icon field-icon" style="--icon-normal: url('content/field.svg'); --icon-active: url('content/field-active.svg')"></div>
+            <span class="text">添加字段</span>
+        </button><br>
+        <button class="btn disabled" id="runBtn">
+            <div class="icon run-icon" style="--icon-normal: url('content/run-disable.svg'); --icon-active: url('content/run-active.svg')"></div>
+            <span class="text">运行处理</span>
+        </button><br>
+        <button class="btn disabled" id="resultBtn">
+            <div class="icon result-icon" style="--icon-normal: url('content/result-disable.svg'); --icon-active: url('content/result-active.svg')"></div>
+            <span class="text">查看结果</span>
+        </button><br>
+        <button class="btn disabled" id="downloadBtn">
+            <div class="icon download-icon" style="--icon-normal: url('content/download-disable.svg'); --icon-active: url('content/download-active.svg')"></div>
+            <span class="text">下载表格</span>
+        </button>
     </div>
 
     <div id="right">
         <image src="content/start.png" alt="文献处理平台 Logo" id="logo">
         <!-- API 配置弹窗 -->
         <div id="api-popup" style="display: none">
-            <button id="close-api-popup" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
+            <button id="close-api-popup" class="close-button" style="position: absolute; top: 10px; right: 10px;"></button>
             <div id="apiTypeArea">
-                <label for="apiTypeInput">API Type：</label>
+                <label for="apiTypeInput" style="margin-right: 10px;">API 类型</label>
                 <select id="apiTypeInput">
                     <option value="Moonshot">Moonshot</option>
                     <option value="OpenAI">OpenAI</option>
                 </select>
             </div>
             <div id="apiHostArea">
-                <label for="apiHostInput">API Host：</label>
-                <input type="url" id="apiHostInput" placeholder="请输入API 主机" />
+                <label for="apiHostInput" style="margin-right: 10px;">API 主机</label>
+                <input type="url" id="apiHostInput" placeholder="请输入API主机" />
             </div>
             <div id="apiKeyArea">
-                <label for="apiKeyInput">API Key：</label>
-                <input type="text" id="apiKeyInput" placeholder="请输入API Key" />
+                <label for="apiKeyInput" style="margin-right: 10px;">API 密钥</label>
+                <input type="text" id="apiKeyInput" placeholder="请输入API密钥" />
             </div>
             <button class="test-button" onclick="testConnection()">测试连接</button>
             <div id="msg"></div>

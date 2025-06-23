@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_2" data-name="图层_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 3px;
+      }
+
+      .cls-2 {
+        fill: #a67a6e;
+        stroke: #a67a6e;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <g id="_图层_3" data-name="图层_3">
+    <circle class="cls-2" cx="20.5" cy="20.5" r="20"/>
+    <polyline class="cls-1" points="30.97 21.12 20.5 11.56 20.5 31.71"/>
+    <line class="cls-1" x1="10.47" y1="21.12" x2="20.5" y2="11.56"/>
+  </g>
+</svg>

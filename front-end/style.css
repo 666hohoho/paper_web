@@ -10,7 +10,12 @@ body {
 }
 
 #left {
-    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #F2F0E6;
+    width: 15%;
     box-sizing: border-box;
     padding: 20px;
 }
@@ -18,59 +23,99 @@ body {
 #right {
     width: 80%;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 #logo {
-    width: 50%;
+    width: 75%;
     height: auto;
-    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+
 
 .btn {
-    background: #5a9fd4;
-    color: white;
-    border: none;
-    width: 80%;
-    height: 60px;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    position: relative;
-    margin: 10px;
-}
+    background: #F2F0E6;
+    color:#A67A6E;
+    border:#A67A6E 3px solid;
+    height:60px;
+    width:150px;
+    border-radius:25px;
+    padding-left:20px;
+    padding-right:20px;
+    padding-top:16px;
+    padding-bottom:16px;
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items:center;
+    gap: 10px;
+    position:relative;
+    font-weight: bold;
+    }
+
 
 .btn.disabled {
-    background: #414f5a;
+    background: #F2F0E6;
+    color: #8D7E7A;
+    border: #8D7E7A 3px solid;
+}
+
+
+
+.icon {
+    width: 40px;
+    height: 40px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+/* 按钮相关*/
+
+.btn.disabled,
+.btn.disabled:hover,
+.btn.disabled:active,
+.btn.disabled.active {
+    background: #F2F0E6 !important;
+    color: #8D7E7A !important;
+    border: #8D7E7A 3px solid !important;
+    pointer-events: none; /* This prevents hover effects */
+    cursor: not-allowed; /* Shows disabled cursor */
+}
+
+.btn.disabled .icon {
+    background-image: var(--icon-normal) !important;
+    filter: none !important;
+}
+
+
+.btn:hover, .btn:active, .btn.active {
+    background-color: #A13424;
     color: white;
-    border: none;
-    width: 80%;
-    height: 60px;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    position: relative;
-    margin: 10px;
+    border-color: #A13424; 
 }
 
-.upload-area {
-    border: 2px dashed #e2e8f0;
-    border-radius: 12px;
-    padding: 20px 10px;
-    text-align: center;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    background: #f8fafc;
+.api-icon, .upload-icon, .field-icon, .run-icon, .result-icon, .download-icon {
+    background-image: var(--icon-normal);
 }
 
-.upload-area:hover {
-    border-color: #3b82f6;
-    background: #f0f9ff;
-}
-
-.upload-icon {
-    transform: scale(0.5); 
+.btn:hover .api-icon, .btn:hover .upload-icon, .btn:hover .field-icon,
+.btn:hover .run-icon, .btn:hover .result-icon, .btn:hover .download-icon,
+.btn:active .api-icon, .btn:active .upload-icon, .btn:active .field-icon,
+.btn:active .run-icon, .btn:active .result-icon, .btn:active .download-icon,
+.btn.active .api-icon, .btn.active .upload-icon, .btn.active .field-icon,
+.btn.active .run-icon, .btn.active .result-icon, .btn.active .download-icon {
+    background-image: var(--icon-active) !important;
 }
 
 
@@ -80,14 +125,67 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #5a9fd4;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    min-width: 400px;
-    max-width: 90vw;
+    background: #f7f5ec;
+    border-radius: 25px;
+    padding: 50px 36px 32px 36px;
+    z-index: 1000;
+    font-family: inherit;
 }
 
+.close-button {
+    width: 24px; /* Match your icon size */
+    height: 24px;
+    background: url('content/close.svg') no-repeat center center;
+    background-size: contain;
+    border: none;
+    cursor: pointer;
+    text-indent: -9999px; /* Hide the "1" text */
+    overflow: hidden;
+    padding: 0; 
+}
+
+#api-popup input,
+#api-popup select {
+    width: 220px;
+    height: 36px;
+    border: 2px solid #222;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 0 10px;
+    margin-bottom: 18px;
+    background: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border 0.2s;
+}
+
+#api-popup .test-button {
+    width: 100%;
+    height: 48px;
+    border: 2px solid #8c3a23;
+    border-radius: 28px;
+    background: transparent;
+    color: #8c3a23;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+#api-popup .test-button:hover {
+    background: #8c3a23;
+    color: #fff;
+}
+
+#api-popup #msg {
+    font-size: 16px;
+    color: #8c3a23;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* 文件 相关----------------------------------------------------*/
 .file-list {
     margin-top: 10px;
 }
@@ -95,17 +193,43 @@ body {
 .file-item {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 0; /* 取消底部间距 */
+    padding: 12px 0;
+    border-bottom: 2px solid #6B4B3E; /* 棕色分割线 */
+    font-size: 20px;
+    font-weight: bold;
+    color: #222; /* 文件名黑色 */
+    justify-content: space-between;
+    width: 910px;         /* 固定宽度 */
+    box-sizing: border-box; /* 添加此行 */
 }
 
+/* 删除按钮样式 */
 .delete-button {
-    margin-left: 10px;
-    color: red;
+    margin-left: 20px;
+    background: #A67A6E;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 24px;
+    font-size: 18px;
     cursor: pointer;
+    transition: background 0.2s;
+    outline: none;
+    min-width: 64px;
+    min-height: 36px;
+    box-shadow: none;
+    letter-spacing: 2px;
 }
 
+.delete-button:hover,
+.delete-button:active {
+    background: #A13424;
+    color: #fff;
+}
 
-/* 表头 相关*/
+/* 表头 相关----------------------------------------------------*/
 .headers-container {
     position: fixed;
     top: 50%;

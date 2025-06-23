@@ -1,3 +1,18 @@
+// 在你的主JS文件中添加
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        document.getElementById('logo').style.display = 'none';
+    }
+});
+
+
 //API相关--------------------------------------------------------------------------
 function showAPIPopup() {
     document.getElementById('api-popup').style.display = 'block';
