@@ -172,48 +172,80 @@ function onFileSelected(event) {
 
 //添加字段----------------------------------------------------------------------------
 function showFieldsIn() {
-        const headersContainer = document.getElementById('headersContainer');
-        headersContainer.style.display = headersContainer.style.display = 'block' ;
-    }
-
-const headersContainer = document.getElementById('headersContainer');
-const addHeaderBtn = document.getElementById('addHeaderBtn');
+    const headersContainer = document.getElementById('headersContainer');
+    headersContainer.style.display = 'block';
+}
 
 function addHeaderInput(value = '') {
+    const headersList = document.querySelector('.headers-list'); // 获取 headers-list 容器
+    const addHeaderBtn = document.getElementById('addHeaderBtn'); // 获取添加按钮
+
+    // 创建一个新的 header-card 容器
     const card = document.createElement('div');
     card.className = 'header-card';
 
+    // 创建输入框
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'header-input';
     input.placeholder = '新表头';
     input.value = value;
-
-    input.oninput = function() {
-        input.style.color = input.value.trim() ? '#222' : '#aaa';
+    input.oninput = function () {
+        // 当输入时，如果有值则设置文本颜色为深灰色(#A13424)，否则为浅灰色(#A67A6E)
+        input.style.color = input.value.trim() ? '#A13424' : '#A67A6E';
     };
-    input.style.color = value ? '#222' : '#aaa';
+    // 初始化时，如果有初始值则设置文本颜色为棕色(#A13424)，否则为浅灰色(#A67A6E)
+    input.style.color = value ? '#A13424' : '#A67A6E';
 
+    // 创建移除按钮
     const remove = document.createElement('span');
     remove.className = 'header-remove';
     remove.innerHTML = '&times;';
     remove.title = '移除';
-    remove.onclick = () => {
-        headersContainer.removeChild(card);
+    remove.onclick = function () {
+        headersList.removeChild(card); // 从 headersList 中移除当前 card
     };
 
+    // 创建选择按钮
+    const selectBtn = document.createElement('button');
+    selectBtn.className = 'header-select';
+    selectBtn.style.background = "url('content/field-unselect.svg') no-repeat center center"; // 默认显示勾选符号
+    selectBtn.title = '选择'; // 鼠标悬浮提示
+    selectBtn.dataset.selected = 'false'; // 初始状态为未选中
+
+    // 点击事件：切换选择状态
+    selectBtn.onclick = function () {
+        const isSelected = selectBtn.dataset.selected === 'true'; // 当前是否选中
+        selectBtn.dataset.selected = isSelected ? 'false' : 'true'; // 切换状态
+        selectBtn.style.background = isSelected ? "url('content/field-unselect.svg') no-repeat center center" : "url('content/field-select.svg') no-repeat center center"; // 改变背景
+    };
+
+
+    // 将输入框和移除按钮添加到 card 中
     card.appendChild(input);
     card.appendChild(remove);
+    card.appendChild(selectBtn);
 
-    // 插入到加号按钮前面
-    headersContainer.insertBefore(card, addHeaderBtn);
-}
+    // 将新创建的 card 插入到 .headers-list 里面
+    headersList.appendChild(card);
+    // 将新创建的 card 插入到btn前面
+    //headersList.insertBefore(card, addHeaderBtn);
+};
 
-addHeaderBtn.onclick = () => addHeaderInput();
 
-document.getElementById('close-fields-popup').addEventListener('click', function() {
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up event listeners after DOM is loaded
+    const addHeaderBtn = document.getElementById('addHeaderBtn');
+    if (addHeaderBtn) {
+        document.querySelector('#addHeaderBtn')?.addEventListener('click', () => addHeaderInput());
+    }
+    
+    document.getElementById('close-fields-popup').addEventListener('click', function() {
         document.getElementById('headersContainer').style.display = 'none';
     });
+});
+
 
 
 // 运行处理----------------------------------------------------------------------------

@@ -158,6 +158,7 @@ def generate_excel():
     result_dir = os.path.dirname(RESULT_FILE)
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
+    #当
     df.to_excel(RESULT_FILE, index=False)
     return jsonify({'message': 'Excel file generated', 'headers': ['文件名'] + headers})
 

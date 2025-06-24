@@ -28,6 +28,7 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    position: relative;
 }
 
 #logo {
@@ -231,11 +232,108 @@ body {
 
 /* 表头 相关----------------------------------------------------*/
 .headers-container {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #5a9fd4;
-    padding: 30px;
-    border-radius: 15px;
-    }
+    background: #fff;
+    padding: 40px 32px 32px 32px;
+    border-radius: 32px;
+    box-shadow: none;
+    border: none;
+    min-width: 0;
+    width: 700px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow: hidden; /* 防止内容溢出 */
+}
+
+
+.headers-list {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: flex-start;
+    display: flex;
+    height: auto; 
+    max-height: calc(100% - 60px); /* 限制最大高度 */
+    min-width: 200px;
+    padding: 10px;
+    overflow-y: auto; /* 垂直滚动 */
+    scrollbar-width: thin; /* Firefox 滚动条宽度 */
+    scrollbar-color: #A67A6E #f0f0f0; /* 滚动条颜色 */
+}
+
+.add-header-btn {
+    position:fixed;
+    bottom: 38px;
+    right: 10px;
+    margin-left: auto;
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    border: none;
+    cursor: pointer;
+    text-indent: -9999px; 
+    overflow: hidden;
+    padding: 0;
+    background: url('content/field.svg') no-repeat center center;
+    
+}
+
+.header-card {
+    display: flex;
+    padding: 5px; /* 统一内边距 */
+    height: 30px;
+    bottom: 10px;
+    right: 50px;
+    align-items: center;
+    margin-right: 0px; /* 添加右边距 */
+    gap: 10px; /* 添加间距 */
+    line-height: 10px;
+}
+
+.header-input {
+    border-radius: 5px; /* 添加圆角 */
+    border: 1px solid #A67A6E;
+    outline: none; /* 去掉聚焦时的蓝色边框 */
+    height: 30px;
+    font-size: 14px; /* 字体大小 */
+    color: #A67A6E; /* 文本颜色 */
+    font-family: inherit; /* 保持字体一致 */
+    text-align: center; /* 文本居中 */
+    cursor: default; /* 禁止编辑时鼠标样式 */
+}
+
+.header-input:focus {
+    border: 1px solid #A13424; /* 聚焦时边框颜色 */
+    border-radius: 5px; /* 添加圆角 */
+}
+
+.header-remove {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #A67A6E; /* 按钮边框颜色 */
+    border-radius: 50%; /* 圆形按钮 */
+    font-size: 16px; /* 字体大小 */
+    color: #A67A6E; /* 文本颜色 */
+    background: transparent; /* 背景透明 */
+    cursor: pointer; /* 鼠标样式 */
+}
+
+.header-select {
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+}

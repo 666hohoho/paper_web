@@ -31,7 +31,7 @@ from dotenv import load_dotenv, find_dotenv
 #load_dotenv(find_dotenv(), override=True)
 from openai import OpenAI
 
-def process_literature(result_path, api_host, api_key, col):
+def cluster_literature(result_path, api_host, api_key, col):
     
     df =pd.read_excel(result_path)
     df=df[df.columns.tolist()]
