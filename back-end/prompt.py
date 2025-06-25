@@ -4,6 +4,7 @@ from openpyxl import Workbook
 import json
 import os
 import PyPDF2
+import pandas as pd
 
 
 
@@ -50,6 +51,11 @@ def process_literature(file_path, api_type, api_host, api_key, headers=None):
             temperature=0.3,
         )
 
+        print(f"API 返回的内容：{completion.choices[0].message.content}")
+
+        # 解析返回的 JSON 数据
+        response_content = completion.choices[0].message.content
+
         
 
 
@@ -62,7 +68,8 @@ def process_literature(file_path, api_type, api_host, api_key, headers=None):
         # 提取 PDF 文本内容
         with open(file_path, "rb") as f:
             reader = PyPDF2.PdfReader(f)
-            file_content = "".join(page.extract_text() for page in reader.pages[:8])
+            file_content = "".join(page.extract_text() for page in reader.pages[:2])
+            print(f"提取的文件内容：{file_content[:500]}...")  # 打印前500个字符以检查内容
 
 
         completion = client.chat.completions.create(
@@ -73,14 +80,27 @@ def process_literature(file_path, api_type, api_host, api_key, headers=None):
                 {"role": "user", "content": file_content}
             ]
         )
+
+        print(f"API 返回的内容：{completion.choices[0].message.content}")
+        response_content = completion.choices[0].message.content.strip() 
+        # 去掉第一个{前面的部分
+        first_brace = response_content.find('{')
+        if first_brace != -1:
+            response_content = response_content[first_brace:]
+        # 去掉最后一个}后面的部分
+        last_brace = response_content.rfind('}')
+        if last_brace != -1:
+            response_content = response_content[:last_brace + 1]
+        print(response_content)
+
     
     else:
         raise ValueError("Unsupported API type. Use 'moonshot' or 'openai'.")
 
-    # 解析返回的 JSON 数据
-    response_content = completion.choices[0].message.content
+    
 
     parsed_data = json.loads(response_content)
+    print(f"解析后的数据：{type(parsed_data)}")
 
     # 动态提取所有字段
     def dict_to_str(val):
@@ -88,17 +108,19 @@ def process_literature(file_path, api_type, api_host, api_key, headers=None):
 
     row_data = []
     for h in headers:
-        if h == "文件名":
-            val = Path(file_path).name
-        else:
-            val = parsed_data.get(h, "未提及")
+        val = parsed_data.get(h, "未提及")
         row_data.append(dict_to_str(val))
 
     print(json.dumps(row_data, ensure_ascii=False))
+
     return row_data
 
 
 if __name__ == "__main__":
     # 仅在直接运行此文件时使用默认路径
-    default_file_path = os.path.join(os.path.dirname(__file__), 'literature', 'test.pdf')
-    process_literature(default_file_path)
+    headers=['作者', '研究内容']
+    row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='moonshot', api_host='https://api.moonshot.cn', api_key='sk-8T6M86gn1V26Amc3zWsCZcQOn69BXUl6PGbcQykuol6HENMO', headers=headers)
+    #row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='openai', api_host='https://api.gptsapi.net', api_key='sk-fW6ed3b49f7fa03dbb8b1f28396f4d69f3f1878bd0aoatl2', headers=headers)
+    print(row_data)
+    df = pd.DataFrame([row_data], columns=headers)
+    df.to_excel("output.xlsx")

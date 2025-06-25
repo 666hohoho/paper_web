@@ -3,6 +3,7 @@ import os
 import subprocess
 import pandas as pd
 from prompt import process_literature
+from cluster import cluster_literature
 from APIconnection import test_moonshot_connection, test_openai_connection
 import time
 import shutil
@@ -131,6 +132,7 @@ def download_result():
 def generate_excel():
     data = request.json
     headers = data.get('headers', [])
+    selected_headers = data.get('selected_headers', [])
     api_type = data.get('api_type', 'moonshot') 
     api_key = data.get('api_key', None)
     api_host = data.get('api_host', None)
@@ -152,15 +154,50 @@ def generate_excel():
             except Exception as e:
                 error_row = [filename] + [f"处理失败: {str(e)}"] + [""] * (len(headers) - 1)
                 rows.append(error_row)
-            time.sleep(60)  # 每处理一个文件等待30秒
+            time.sleep(5)  # 每处理一个文件等待30秒
 
     df = pd.DataFrame(rows, columns=['文件名'] + headers)
-    result_dir = os.path.dirname(RESULT_FILE)
-    if not os.path.exists(result_dir):
-        os.makedirs(result_dir)
-    #当
-    df.to_excel(RESULT_FILE, index=False)
-    return jsonify({'message': 'Excel file generated', 'headers': ['文件名'] + headers})
+
+    try:
+        # 如果 selected_headers 不为空，尝试调用 cluster_literature
+        if selected_headers:
+            print("Before clustering:")
+            print(df.head())
+            try:
+                df = cluster_literature(df, api_host, api_key, selected_headers)
+                print("After clustering:")
+                print(df.head())
+            except ImportError as e:
+                print(f"Cluster module not found: {str(e)}")
+                # 记录错误，但继续执行
+                error_message = f"Cluster module not found: {str(e)}"
+            except Exception as e:
+                print(f"Error in clustering: {str(e)}")
+                # 记录错误，但继续执行
+                error_message = f"Error in clustering: {str(e)}"
+            else:
+                error_message = None  # 如果没有错误，清空错误信息
+
+        # 无论 clustering 是否出错，都保存文件
+        result_dir = os.path.join(RESULT_FILE)  # 确保是文件路径
+        df.to_excel(result_dir, index=False)
+        print(f"File successfully saved to {result_dir}")
+
+        # 如果 clustering 出错，返回警告信息，同时提示文件已保存
+        if error_message:
+            return jsonify({
+                'message': f'Excel file generated with errors: {error_message}',
+                'file_path': result_dir
+            }), 200
+
+        # 如果一切正常，返回成功信息
+        return jsonify({'message': 'Excel file generated successfully', 'file_path': result_dir}), 200
+
+    except Exception as e:
+        # 捕获其他意外错误
+        print(f"Unexpected error: {str(e)}")
+        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
+
 
 
 

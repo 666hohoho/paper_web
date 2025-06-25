@@ -255,20 +255,34 @@ document.getElementById('runBtn').addEventListener('click', function ()  {
     const apiHost = document.getElementById('apiHostInput').value.trim();
     const headerInputs = headersContainer.querySelectorAll('.header-input');
     const headers = Array.from(headerInputs).map(input => input.value.trim()).filter(Boolean);
+
+    const selected_headers = Array.from(headersContainer.querySelectorAll('.header-select'))
+    .filter(btn => btn.dataset.selected === 'true') // 过滤选中按钮
+    .map(btn => {
+        const input = btn.closest('.header-card').querySelector('.header-input'); // 在父容器中查找输入框
+        if (!input) {
+            console.error('No input element found for button:', btn);
+            return ''; // 如果没有找到输入框，返回空字符串
+        }
+        return input.value.trim(); // 获取输入框的值并去除空格
+    })
+    .filter(Boolean); // 过滤掉空值
+
     console.log('API Type:', apiType);
     console.log('API Key:', apiKey);
     console.log('API Host:', apiHost);
     console.log('Headers:', headers);
+    console.log('Selected Headers:', selected_headers);
 
     if (!apiKey || !apiHost || headers.length === 0) {
         console.log('请填写所有必填项');
         return;
     } 
-    // 请求后端处理
+    //请求后端处理
     fetch('/generate_excel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ headers, api_type: apiType, api_key: apiKey, api_host: apiHost })
+        body: JSON.stringify({ headers, selected_headers, api_type: apiType, api_key: apiKey, api_host: apiHost })
     })
     .then(res => res.json())
     .then(data => {
