@@ -23,15 +23,15 @@
             <span class="text">添加字段</span>
         </button><br>
         <button class="btn disabled" id="runBtn">
-            <div class="icon run-icon" style="--icon-normal: url('content/run-disable.svg'); --icon-active: url('content/run-active.svg')"></div>
+            <div class="icon run-icon" style="--icon-disabled: url('content/run-disable.svg'); --icon-normal: url('content/run.svg'); --icon-active: url('content/run-active.svg')"></div>
             <span class="text">运行处理</span>
         </button><br>
         <button class="btn disabled" id="resultBtn">
-            <div class="icon result-icon" style="--icon-normal: url('content/result-disable.svg'); --icon-active: url('content/result-active.svg')"></div>
+            <div class="icon result-icon" style="--icon-disabled: url('content/result-disable.svg'); --icon-normal: url('content/result.svg'); --icon-active: url('content/result-active.svg')"></div>
             <span class="text">查看结果</span>
         </button><br>
         <button class="btn disabled" id="downloadBtn">
-            <div class="icon download-icon" style="--icon-normal: url('content/download-disable.svg'); --icon-active: url('content/download-active.svg')"></div>
+            <div class="icon download-icon" style="--icon-disabled: url('content/download-disable.svg'); --icon-normal: url('content/download.svg'); --icon-active: url('content/download-active.svg')"></div>
             <span class="text">下载表格</span>
         </button>
     </div>
@@ -69,7 +69,7 @@
         </div>
 
         <!-- 结果表格 -->
-        <table id="result-table"></table>
+        <table id="result-table" style="display: none;"></table>
     </div>
 
 </div>

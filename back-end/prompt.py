@@ -54,7 +54,16 @@ def process_literature(file_path, api_type, api_host, api_key, headers=None):
         print(f"API 返回的内容：{completion.choices[0].message.content}")
 
         # 解析返回的 JSON 数据
-        response_content = completion.choices[0].message.content
+        response_content = completion.choices[0].message.content.strip() 
+        # 去掉第一个{前面的部分
+        first_brace = response_content.find('{')
+        if first_brace != -1:
+            response_content = response_content[first_brace:]
+        # 去掉最后一个}后面的部分
+        last_brace = response_content.rfind('}')
+        if last_brace != -1:
+            response_content = response_content[:last_brace + 1]
+        print(response_content)
 
         
 
@@ -118,7 +127,7 @@ def process_literature(file_path, api_type, api_host, api_key, headers=None):
 
 if __name__ == "__main__":
     # 仅在直接运行此文件时使用默认路径
-    headers=['作者', '研究内容']
+    headers=['研究内容']
     row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='moonshot', api_host='https://api.moonshot.cn', api_key='sk-8T6M86gn1V26Amc3zWsCZcQOn69BXUl6PGbcQykuol6HENMO', headers=headers)
     #row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='openai', api_host='https://api.gptsapi.net', api_key='sk-fW6ed3b49f7fa03dbb8b1f28396f4d69f3f1878bd0aoatl2', headers=headers)
     print(row_data)

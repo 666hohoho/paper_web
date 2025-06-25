@@ -147,16 +147,18 @@ def generate_excel():
     for filename in os.listdir(LITERATURE_FOLDER):
         if filename.endswith('.pdf'):
             file_path = os.path.join(LITERATURE_FOLDER, filename)
-            try:
-                row = process_literature(file_path, api_type, api_host, api_key, headers)
-                row.insert(0, filename)
-                rows.append(row)
-            except Exception as e:
-                error_row = [filename] + [f"处理失败: {str(e)}"] + [""] * (len(headers) - 1)
-                rows.append(error_row)
-            time.sleep(5)  # 每处理一个文件等待30秒
+            row = process_literature(file_path, api_type, api_host, api_key, headers)
+            print(type(row),len(row))
+            row.insert(0, filename)
+            rows.append(row)
+            print(rows,type(rows),len(rows))
+            # except Exception as e:
+            #     error_row = [filename] + [f"处理失败: {str(e)}"] + [""] * (len(headers) - 1)
+            #     rows.append(error_row)
+            time.sleep(60)  # 每处理一个文件等待30秒
 
     df = pd.DataFrame(rows, columns=['文件名'] + headers)
+    print(df)
 
     try:
         # 如果 selected_headers 不为空，尝试调用 cluster_literature

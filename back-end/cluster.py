@@ -104,7 +104,12 @@ def cluster_literature(df, api_host, api_key, selected_headers):
 
     for i in range(num_cluster):
         # 获取当前cluster的研究目标
-        cluster_texts = df.loc[df['Cluster'] == i, selected_headers].dropna().astype(str)
+        cluster_texts = df.loc[
+            (df['Cluster'] == i) &  # 筛选属于特定 Cluster 的行
+            ~df[selected_headers].isin(['处理失败', '未提及']).any(axis=1),  # 去掉包含“处理失败”或“未提及”的行
+            selected_headers
+        ].dropna().astype(str)  # 去掉空值并转换为字符串
+
         
         if not cluster_texts.empty:  # 检查是否有数据
             print(cluster_texts.iloc[0])  # 安全访问第一个元素

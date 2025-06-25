@@ -1,4 +1,4 @@
-// 在你的主JS文件中添加
+// 点击时改变状态为active
 document.querySelectorAll('.btn').forEach(btn => {
   btn.addEventListener('click', function() {
     document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
@@ -6,6 +6,7 @@ document.querySelectorAll('.btn').forEach(btn => {
   });
 });
 
+// 选择文件时隐藏logo
 document.getElementById('fileInput').addEventListener('change', function(e) {
     if (e.target.files.length > 0) {
         document.getElementById('logo').style.display = 'none';
@@ -13,9 +14,12 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
 });
 
 
+
+
 //API相关--------------------------------------------------------------------------
 function showAPIPopup() {
     document.getElementById('api-popup').style.display = 'block';
+    document.getElementById('logo').style.display = 'none';
     document.getElementById('apiTypeInput').value = apiConfig.Type;
     document.getElementById('apiHostInput').value = apiConfig.host;
     document.getElementById('apiKeyInput').value = apiConfig.key;
@@ -60,6 +64,7 @@ function testConnection() {
 
 document.getElementById('close-api-popup').addEventListener('click', function() {
         document.getElementById('api-popup').style.display = 'none';
+        document.getElementById('logo').style.display = 'block'; // 清空消息
     });
 
 
@@ -173,6 +178,8 @@ function onFileSelected(event) {
 //添加字段----------------------------------------------------------------------------
 function showFieldsIn() {
     const headersContainer = document.getElementById('headersContainer');
+    const fileList = document.getElementById('fileList');
+    fileList.style.display = 'none'; // 隐藏文件列表
     headersContainer.style.display = 'block';
 }
 
@@ -243,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('close-fields-popup').addEventListener('click', function() {
         document.getElementById('headersContainer').style.display = 'none';
+        document.getElementById('logo').style.display = 'block'; 
     });
 });
 
@@ -297,7 +305,14 @@ document.getElementById('runBtn').addEventListener('click', function ()  {
 
 
 // 查看结果----------------------------------------------------------------------------
+const resultTable = document.getElementById('result-table');
+const logo = document.getElementById('logo');
+const fileList = document.getElementById('fileList');
+
 document.getElementById('resultBtn').onclick = () => {
+    logo.style.display = 'none';
+    fileList.style.display = 'none';
+    resultTable.style.display = 'table';
     fetch('/result')
         .then(res => res.json())
         .then(data => {
