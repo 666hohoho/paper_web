@@ -138,5 +138,5 @@ def cluster_literature(df, api_host, api_key, selected_headers):
 if __name__ == "__main__":
     # 仅在直接运行此文件时使用默认路径
     df= pd.read_excel('/Users/sunxueyao/Documents/paper_web/back-end/results/literature_summary.xlsx')
-    df=cluster_literature(df,api_host='https://api.gptsapi.net',api_key='sk-fW6ed3b49f7fa03dbb8b1f28396f4d69f3f1878bd0aoatl2', selected_headers=['研究内容',' Data Source'])
+    df=cluster_literature(df,api_host='https://api.gptsapi.net',api_key='your-api-key', selected_headers=['研究内容',' Data Source'])
     df.to_excel('/Users/sunxueyao/Documents/paper_web/back-end/results/literature_summary_clustered.xlsx', index=False)

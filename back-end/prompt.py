@@ -128,8 +128,8 @@ def process_literature(file_path, api_type, api_host, api_key, headers=None):
 if __name__ == "__main__":
     # 仅在直接运行此文件时使用默认路径
     headers=['研究内容']
-    row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='moonshot', api_host='https://api.moonshot.cn', api_key='sk-8T6M86gn1V26Amc3zWsCZcQOn69BXUl6PGbcQykuol6HENMO', headers=headers)
-    #row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='openai', api_host='https://api.gptsapi.net', api_key='sk-fW6ed3b49f7fa03dbb8b1f28396f4d69f3f1878bd0aoatl2', headers=headers)
+    row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='moonshot', api_host='https://api.moonshot.cn', api_key='your-api-key', headers=headers)
+    #row_data=process_literature(file_path='./literature/01How to hide your voice.pdf', api_type='openai', api_host='https://api.gptsapi.net', api_key='your-api-key', headers=headers)
     print(row_data)
     df = pd.DataFrame([row_data], columns=headers)
     df.to_excel("output.xlsx")

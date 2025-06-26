@@ -37,6 +37,11 @@
     </div>
 
     <div id="right">
+        <!-- 进度条 -->
+        <div id="progressBar" style="display: none">
+            <div class="progress"></div>
+        </div>
+        <!-- logo -->
         <image src="content/start.png" alt="文献处理平台 Logo" id="logo">
         <!-- API 配置弹窗 -->
         <div id="api-popup" style="display: none">
@@ -67,9 +72,10 @@
             <div class="headers-list"></div>
             <button type="button" class="add-header-btn" id="addHeaderBtn" title="添加表头"></button>
         </div>
-
         <!-- 结果表格 -->
-        <table id="result-table" style="display: none;"></table>
+        <div id="result-table-wrapper" class="result-table-wrapper" style="display: none">
+          <table id="result-table"></table>
+        </div>
     </div>
 
 </div>

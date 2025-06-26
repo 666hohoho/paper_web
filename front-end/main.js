@@ -195,7 +195,7 @@ function addHeaderInput(value = '') {
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'header-input';
-    input.placeholder = '新表头';
+    input.placeholder = '新字段';
     input.value = value;
     input.oninput = function () {
         // 当输入时，如果有值则设置文本颜色为深灰色(#A13424)，否则为浅灰色(#A67A6E)
@@ -258,6 +258,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 运行处理----------------------------------------------------------------------------
 document.getElementById('runBtn').addEventListener('click', function ()  {
+
+    //以下为更新进度条
+    const fileItems = document.querySelectorAll('.file-item');
+    updateProgressBar(fileItems.length);
+
+    //以下为请求后端
     const apiType = document.getElementById('apiTypeInput').value.trim();
     const apiKey = document.getElementById('apiKeyInput').value.trim();
     const apiHost = document.getElementById('apiHostInput').value.trim();
@@ -303,15 +309,18 @@ document.getElementById('runBtn').addEventListener('click', function ()  {
     .catch(() => showMsg('运行出错'));
 });
 
-
 // 查看结果----------------------------------------------------------------------------
 const resultTable = document.getElementById('result-table');
 const logo = document.getElementById('logo');
 const fileList = document.getElementById('fileList');
+const resultWrapper = document.getElementById('result-table-wrapper');
+const progressBar = document.getElementById('progressBar');
 
 document.getElementById('resultBtn').onclick = () => {
     logo.style.display = 'none';
     fileList.style.display = 'none';
+    progressBar.style.display = 'none'; // 隐藏进度条
+    resultWrapper.style.display = 'block'; // 显示结果表格容器
     resultTable.style.display = 'table';
     fetch('/result')
         .then(res => res.json())
@@ -399,7 +408,34 @@ function updateButtonStates() {
     }else {
         // Enable buttons
         runBtn.classList.remove('disabled');
-        resultBtn.classList.remove('disabled');
-        downloadBtn.classList.remove('disabled');
     }
     }
+
+// 我希望progressBar根据上传文献的数量*6s设置总时间，运行时从0到100%变化
+function updateProgressBar(totalFiles) {
+    document.getElementById('progressBar').style.display = 'block'; // 显示进度条
+    const progressBar = document.querySelector('#progressBar .progress');
+    const totalTime = (totalFiles+1) * 60; // 每个文件60秒
+    let currentTime = 0;
+
+    // 重置进度条
+    progressBar.style.width = '0%';
+
+    const interval = setInterval(() => {
+        currentTime += 1; // 每秒更新一次
+        const percentage = (currentTime / totalTime) * 100;
+        progressBar.style.width = percentage + '%';
+
+        if (currentTime >= totalTime) {
+            clearInterval(interval);
+            progressBar.style.width = '100%'; // 确保最后是100%
+            const resultBtn = document.getElementById('resultBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            resultBtn.classList.remove('disabled');
+            downloadBtn.classList.remove('disabled');
+        }
+    }, 1000); // 每1000毫秒（1秒）更新一次
+
+    
+
+}

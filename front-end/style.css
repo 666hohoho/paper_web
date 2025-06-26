@@ -21,14 +21,14 @@ body {
 }
 
 #right {
-    width: 80%;
-    box-sizing: border-box;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 80%;
+    box-sizing: border-box;
     justify-content: center;
     height: 100vh;
-    position: relative;
     overflow: hidden;
 }
 
@@ -346,10 +346,40 @@ body {
 }
 
 /* 表格 相关----------------------------------------------------*/
+.result-table-wrapper {
+    width: 80%;
+    height: 80%;
+    overflow: auto;
+    margin-left: 20px;
+}
 #result-table {
-    width: 100%; /* 表格宽度占满父容器 */
-    height: 100%; /* 表格高度占满父容器 */
-    overflow: auto; /* 内容超出时显示滚动条 */
-    border: 1px solid #ccc; /* 可选：表格边框样式 */
-    box-sizing: border-box; /* 包含内边距和边框 */
+    width: 100%;
+    /* 不要设置height和overflow */
+}
+#result-table tr:nth-child(even) {
+    background-color: #F2F0E6; /* 隔行颜色 */
+}
+#result-table td {
+    background-color: #F2F0E6; /* 隔行颜色 */
+}
+
+
+/* progressBar ----------------------------------------------------*/
+#progressBar {
+    position: absolute;
+    left: 50%;
+    top: 550px; /* 距离顶部50px，可根据需要调整 */
+    transform: translateX(-50%);
+    z-index: 10; /* 比logo高即可 */
+    width: 400px;
+    height: 15px;
+    background-color: #F2F0E6; /* 背景颜色 */
+    border-radius: 5px; /* 圆角效果 */
+    display: none; /* 默认隐藏，运行时显示 */
+}
+#progressBar .progress {
+    height: 100%;
+    background-color: #A67A6E; /* 进度条颜色 */
+    width: 0; /* 初始宽度为0 */
+    transition: width 0.3s ease; /* 平滑过渡效果 */
 }
