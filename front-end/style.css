@@ -397,3 +397,31 @@ body {
     width: 0; /* 初始宽度为0 */
     transition: width 0.3s ease; /* 平滑过渡效果 */
 }
+
+/* footer ----------------------------------------------------*/
+#footer {
+    position: fixed;   /* 固定定位 */
+    right: 20px;       /* 距离右侧20px */
+    bottom: 20px;      /* 距离底部20px */
+    text-align: right; /* 文本右对齐 */
+    font-size: 12px;   /* 小字号 */
+    color: #30323C;       /* 灰色文字 */
+    font-family: Arial, sans-serif; /* 可选字体 */
+    z-index: 100;      /* 确保在最上层 */
+    white-space: nowrap; /* 防止换行 */
+}
+
+#footer p {
+    display: inline; /* 使p元素变为行内元素 */
+    font-style: italic;
+}
+
+#footer p a {
+    color: #30323C;    /* 链接颜色 */
+    text-decoration: none; /* 去掉下划线 */
+    margin-left: 5px;  /* 链接左边距 */
+}
+
+#footer p a:hover {
+    text-decoration: underline; /* 悬停时显示下划线 */
+}
