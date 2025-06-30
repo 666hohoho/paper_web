@@ -99,16 +99,16 @@ def upload_files():
 
 
 
-@app.route('/run', methods=['POST'])
-def run_multi():
-    try:
-        result = subprocess.run(
-            ['/usr/bin/python3', os.path.join(BASE_DIR, 'multi.py')],
-            check=True, capture_output=True, text=True
-        )
-        return jsonify({'message': 'multi.py executed successfully', 'stdout': result.stdout, 'stderr': result.stderr})
-    except subprocess.CalledProcessError as e:
-        return jsonify({'error': str(e), 'stdout': e.stdout, 'stderr': e.stderr}), 500
+# @app.route('/run', methods=['POST'])
+# def run_multi():
+#     try:
+#         result = subprocess.run(
+#             ['/usr/bin/python3', os.path.join(BASE_DIR, 'multi.py')],
+#             check=True, capture_output=True, text=True
+#         )
+#         return jsonify({'message': 'multi.py executed successfully', 'stdout': result.stdout, 'stderr': result.stderr})
+#     except subprocess.CalledProcessError as e:
+#         return jsonify({'error': str(e), 'stdout': e.stdout, 'stderr': e.stderr}), 500
 
 
 
@@ -130,6 +130,7 @@ def download_result():
 
 @app.route('/generate_excel', methods=['POST'])
 def generate_excel():
+    print("Received request to generate Excel file")
     data = request.json
     headers = data.get('headers', [])
     selected_headers = data.get('selected_headers', [])
@@ -142,23 +143,103 @@ def generate_excel():
         return jsonify({'error': 'API key is required'}), 400
     if not api_host:
         return jsonify({'error': 'API host is required'}), 400
+    
+    result_file = os.path.join(RESULT_FILE)
+    if os.path.exists(result_file):
+        old_df = pd.read_excel(result_file)
+        old_filenames = old_df['文件名'].tolist()
+        new_filenames = list(set(os.listdir(LITERATURE_FOLDER)) - set(old_filenames))
+        old_headers = [header for header in old_df.columns.tolist() if not header.startswith(('Cluster', 'Topic'))]
+        if '文件名' in old_headers:
+            old_headers.remove('文件名')
+        new_headers = list(set(headers) - set(old_headers))
+        cluster_name = "Cluster: " + "+".join(selected_headers)
+        if cluster_name in selected_headers:
+            selected_headers = []
+    else:
+        old_df = None
+        old_filenames = []
+        old_headers = []
+        new_filenames = os.listdir(LITERATURE_FOLDER)
+        new_headers = headers
 
+    seconds = 5  # 每个文件处理间隔时间
     rows = []
-    for filename in os.listdir(LITERATURE_FOLDER):
-        if filename.endswith('.pdf'):
-            file_path = os.path.join(LITERATURE_FOLDER, filename)
-            row = process_literature(file_path, api_type, api_host, api_key, headers)
-            print(type(row),len(row))
-            row.insert(0, filename)
-            rows.append(row)
-            print(rows,type(rows),len(rows))
-            # except Exception as e:
-            #     error_row = [filename] + [f"处理失败: {str(e)}"] + [""] * (len(headers) - 1)
-            #     rows.append(error_row)
-            time.sleep(60)  # 每处理一个文件等待30秒
+    # 情况1: 
+    if old_df is None:
+        for filename in new_filenames:
+            if filename.endswith('.pdf'):
+                file_path = os.path.join(LITERATURE_FOLDER, filename)
+                row = process_literature(file_path, api_type, api_host, api_key, new_headers)
+                print(type(row),len(row))
+                row.insert(0, filename)
+                rows.append(row)
+                print(rows,type(rows),len(rows))
+                # except Exception as e:
+                #     error_row = [filename] + [f"处理失败: {str(e)}"] + [""] * (len(headers) - 1)
+                #     rows.append(error_row)
+                time.sleep(seconds)
+        df = pd.DataFrame(rows, columns=['文件名'] + headers)
+    
+    # 情况2:
+    elif new_filenames and not new_headers:
+        for filename in new_filenames:
+            if filename.endswith('.pdf'):
+                file_path = os.path.join(LITERATURE_FOLDER, filename)
+                row = process_literature(file_path, api_type, api_host, api_key, old_headers)
+                print(type(row),len(row))
+                row.insert(0, filename)
+                rows.append(row)
+                print(rows,type(rows),len(rows))
+                # except Exception as e:
+                #     error_row = [filename] + [f"处理失败: {str(e)}"] + [""] * (len(headers) - 1)
+                #     rows.append(error_row)
+                time.sleep(seconds)
+        df = pd.DataFrame(rows, columns=['文件名'] + headers)
+        df = pd.concat([old_df, df], ignore_index=True)
+    
+    # 情况3:
+    elif not new_filenames and new_headers:
+        for filename in old_filenames:
+            if filename.endswith('.pdf'):
+                file_path = os.path.join(LITERATURE_FOLDER, filename)
+                new_data = process_literature(file_path, api_type, api_host, api_key, new_headers)
+                for i, header in enumerate(new_headers):
+                    old_df.loc[old_df['文件名'] == filename, header] = new_data[i]
+                print(new_data,type(new_data),len(new_data))
+                time.sleep(seconds)
+        df = old_df.copy()
+    
+    # 情况4:
+    elif new_filenames and new_headers:
+        for filename in new_filenames:
+            if filename.endswith('.pdf'):
+                file_path = os.path.join(LITERATURE_FOLDER, filename)
+                row = process_literature(file_path, api_type, api_host, api_key, headers)
+                print(type(row),len(row))
+                row.insert(0, filename)
+                rows.append(row)
+                print(rows,type(rows),len(rows))
+                time.sleep(seconds)
+        for filename in old_filenames:
+            if filename.endswith('.pdf'):
+                file_path = os.path.join(LITERATURE_FOLDER, filename)
+                new_data = process_literature(file_path, api_type, api_host, api_key, new_headers)
+                for i, header in enumerate(new_headers):
+                    old_df.loc[old_df['文件名'] == filename, header] = new_data[i]
+                print(new_data,type(new_data),len(new_data))
+                time.sleep(seconds)
+        df = pd.DataFrame(rows, columns=['文件名'] + headers)
+        df = pd.concat([old_df, df], ignore_index=True)
+    # 情况5:    
+    else:
+        print("No new files or headers to process.")
+        return jsonify({'error': 'No new files or headers to process.'}), 200
 
-    df = pd.DataFrame(rows, columns=['文件名'] + headers)
+
     print(df)
+
+    error_message = None  # 初始化错误信息
 
     try:
         # 如果 selected_headers 不为空，尝试调用 cluster_literature

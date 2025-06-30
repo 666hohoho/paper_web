@@ -1,25 +1,9 @@
-// 点击时改变状态为active
-document.querySelectorAll('.btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
-
-// 选择文件时隐藏logo
-document.getElementById('fileInput').addEventListener('change', function(e) {
-    if (e.target.files.length > 0) {
-        document.getElementById('logo').style.display = 'none';
-    }
-});
-
-
-
-
 //API相关--------------------------------------------------------------------------
 function showAPIPopup() {
     document.getElementById('api-popup').style.display = 'block';
-    document.getElementById('logo').style.display = 'none';
+    document.getElementById('logo').style.display = 'block';
+    document.getElementById('result-table-wrapper').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'none';
     document.getElementById('apiTypeInput').value = apiConfig.Type;
     document.getElementById('apiHostInput').value = apiConfig.host;
     document.getElementById('apiKeyInput').value = apiConfig.key;
@@ -65,14 +49,26 @@ function testConnection() {
 document.getElementById('close-api-popup').addEventListener('click', function() {
         document.getElementById('api-popup').style.display = 'none';
         document.getElementById('logo').style.display = 'block'; // 清空消息
+        document.getElementById('api').classList.remove('active'); // 移除 active 类
     });
 
 
 
 //上传文件---------------------------------------------------------------------------
+
+// 选择文件时隐藏logo
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        document.getElementById('logo').style.display = 'none';
+    }
+});
+
 // 绑定 change 事件监听器
 let files = [];
 document.getElementById('fileInput').addEventListener('change', async (event) => {
+    document.getElementById('result-table-wrapper').style.display = 'none';
+    document.getElementById('fileList').style.display = 'block'; // 显示文件列表
+    document.getElementById('progressBar').style.display = 'none';
     const fileInput = event.target;
     const files = fileInput.files;
     if (!files || files.length === 0) {
@@ -181,6 +177,8 @@ function showFieldsIn() {
     const fileList = document.getElementById('fileList');
     fileList.style.display = 'none'; // 隐藏文件列表
     headersContainer.style.display = 'block';
+    document.getElementById('result-table-wrapper').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'none';
 }
 
 function addHeaderInput(value = '') {
@@ -222,6 +220,11 @@ function addHeaderInput(value = '') {
 
     // 点击事件：切换选择状态
     selectBtn.onclick = function () {
+        const apiType = document.getElementById('apiTypeInput').value.trim();
+        if (apiType === 'Moonshot') {
+            selectBtn.style.background = "url('content/field-disable.svg') no-repeat center center"; 
+            return;
+        }
         const isSelected = selectBtn.dataset.selected === 'true'; // 当前是否选中
         selectBtn.dataset.selected = isSelected ? 'false' : 'true'; // 切换状态
         selectBtn.style.background = isSelected ? "url('content/field-unselect.svg') no-repeat center center" : "url('content/field-select.svg') no-repeat center center"; // 改变背景
@@ -251,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('close-fields-popup').addEventListener('click', function() {
         document.getElementById('headersContainer').style.display = 'none';
         document.getElementById('logo').style.display = 'block'; 
+        document.getElementById('fieldsIn').classList.remove('active'); // 移除 active 类
     });
 });
 
@@ -258,10 +262,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 运行处理----------------------------------------------------------------------------
 document.getElementById('runBtn').addEventListener('click', function ()  {
+    document.getElementById('result-table-wrapper').style.display = 'none';
+    document.getElementById('headersContainer').style.display = 'none'; // 隐藏字段输入容器
+    document.getElementById('fileList').style.display = 'none'; // 隐藏文件列表
+    document.getElementById('api-popup').style.display = 'none'; // 隐藏API配置弹窗
+    document.getElementById('logo').style.display = 'block'; // 隐藏logo
+    document.getElementById('progressBar').style.display = 'block'; // 显示进度条
 
     //以下为更新进度条
-    const fileItems = document.querySelectorAll('.file-item');
-    updateProgressBar(fileItems.length);
+    let isRunning = true;  // 标志函数是否仍在运行
+    // 设置1秒后检查是否还在运行
+    setTimeout(() => {
+        if (isRunning) {
+            const fileItems = document.querySelectorAll('.file-item');
+            updateProgressBar(fileItems.length);
+        }
+    }, 1000);
+
+    // 控制查看结果和下载按钮的状态
+    const resultBtn = document.getElementById('resultBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    resultBtn.classList.add('disabled');
+    downloadBtn.classList.add('disabled');
 
     //以下为请求后端
     const apiType = document.getElementById('apiTypeInput').value.trim();
@@ -292,7 +314,7 @@ document.getElementById('runBtn').addEventListener('click', function ()  {
         console.log('请填写所有必填项');
         return;
     } 
-    //请求后端处理
+
     fetch('/generate_excel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -301,12 +323,34 @@ document.getElementById('runBtn').addEventListener('click', function ()  {
     .then(res => res.json())
     .then(data => {
         if (data.error) {
-            showMsg('运行失败: ' + data.error);
+            if (data.error === 'No new files or headers to process.') {
+                alert('没有新文件或新字段需要处理！');
+                console.log('没有新文件或新字段需要处理！');
+                isRunning = false;
+                return;
+            }
+            console.log('运行失败: ' + data.error);
         } else {
-            showMsg('处理完成: ' + data.message);
+            console.log('处理完成: ' + data.message);
+            // 只需要让进度条直接到100%，并清除动画
+            const progressBar = document.querySelector('#progressBar .progress');
+            progressBar.style.width = '100%';
+
+            // 清除所有进度条动画
+            if (window.progressInterval) {
+                clearInterval(window.progressInterval);
+                window.progressInterval = null;
+            }
+
+            const resultBtn = document.getElementById('resultBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            resultBtn.classList.remove('disabled');
+            downloadBtn.classList.remove('disabled');
         }
     })
-    .catch(() => showMsg('运行出错'));
+    .catch(() => console.log('运行出错'));
+
+    
 });
 
 // 查看结果----------------------------------------------------------------------------
@@ -409,33 +453,46 @@ function updateButtonStates() {
         // Enable buttons
         runBtn.classList.remove('disabled');
     }
-    }
+}
 
-// 我希望progressBar根据上传文献的数量*6s设置总时间，运行时从0到100%变化
+// 点击时改变状态为active
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+
+
+// 我希望progressBar根据上传文献的数量*6s设置总时间，运行时从0到100%变化-----------------------------------------------------------------
 function updateProgressBar(totalFiles) {
-    document.getElementById('progressBar').style.display = 'block'; // 显示进度条
+    document.getElementById('progressBar').style.display = 'block';
     const progressBar = document.querySelector('#progressBar .progress');
-    const totalTime = (totalFiles+1) * 60; // 每个文件60秒
+    const totalTime = totalFiles * 15;
     let currentTime = 0;
 
-    // 重置进度条
     progressBar.style.width = '0%';
 
-    const interval = setInterval(() => {
-        currentTime += 1; // 每秒更新一次
+    // 清除之前的 interval，避免多个动画叠加
+    if (window.progressInterval) {
+        clearInterval(window.progressInterval);
+    }
+
+    window.progressInterval = setInterval(() => {
+        currentTime += 1;
         const percentage = (currentTime / totalTime) * 100;
         progressBar.style.width = percentage + '%';
 
         if (currentTime >= totalTime) {
-            clearInterval(interval);
-            progressBar.style.width = '100%'; // 确保最后是100%
-            const resultBtn = document.getElementById('resultBtn');
-            const downloadBtn = document.getElementById('downloadBtn');
-            resultBtn.classList.remove('disabled');
-            downloadBtn.classList.remove('disabled');
+            clearInterval(window.progressInterval);
+            progressBar.style.width = '100%';
+        //     const resultBtn = document.getElementById('resultBtn');
+        //     const downloadBtn = document.getElementById('downloadBtn');
+        //     resultBtn.classList.remove('disabled');
+        //     downloadBtn.classList.remove('disabled');
         }
-    }, 1000); // 每1000毫秒（1秒）更新一次
+    }, 1000);
 
-    
-
+    return window.progressInterval;
 }

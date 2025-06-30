@@ -100,34 +100,37 @@ def cluster_literature(df, api_host, api_key, selected_headers):
 
     km_model = KMeans(n_clusters = num_cluster, init ='k-means++', random_state = 42)
     y = km_model.fit_predict(matrix)
-    df['Cluster']=y
+    cluster_col_name = "Cluster: " + "+".join(selected_headers)
+    df[cluster_col_name] = y
+    Topic = "Topic: " + "+".join(selected_headers)
 
     for i in range(num_cluster):
-        # 获取当前cluster的研究目标
-        cluster_texts = df.loc[
-            (df['Cluster'] == i) &  # 筛选属于特定 Cluster 的行
-            ~df[selected_headers].isin(['处理失败', '未提及']).any(axis=1),  # 去掉包含“处理失败”或“未提及”的行
+        # 选出该聚类下所有有效行
+        cluster_df = df.loc[
+            (df[cluster_col_name] == i) &
+            ~df[selected_headers].isin(['处理失败', '未提及']).any(axis=1),
             selected_headers
-        ].dropna().astype(str)  # 去掉空值并转换为字符串
+        ].dropna().astype(str)
 
-        
-        if not cluster_texts.empty:  # 检查是否有数据
-            print(cluster_texts.iloc[0])  # 安全访问第一个元素
+        # 把所有字段内容合并成一个大字符串
+        cluster_texts = '; '.join(
+            cluster_df.apply(lambda row: ' '.join(row.values), axis=1)
+        )
 
-            # 调用API
+        print("文献内容" + cluster_texts)
+
+        if cluster_texts.strip():
             completion = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4.1",
                 messages=[
                     {"role": "system", "content": "你是一个科研助手，擅长总结研究主题"},
-                    {"role": "user", "content": "请用不超过20个中文词总结这类研究的核心目标"},
-                    {"role": "user", "content": '; '.join(cluster_texts)}
+                    {"role": "user", "content": "请根据以下文献内容，用不超过20个中文词总结其核心主题，突出具体研究领域和对象："},
+                    {"role": "user", "content": cluster_texts}
                 ],
-                temperature=0.3  # 减少随机性
+                temperature=0.3
             )
-
-            # 赋值给对应cluster的行
             summary = completion.choices[0].message.content
-            df.loc[df['Cluster'] == i, 'topic'] = summary
+            df.loc[df[cluster_col_name] == i, Topic] = summary
         else:
             print(f"警告：Cluster {i}没有有效数据")
 
