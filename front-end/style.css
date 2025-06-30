@@ -347,6 +347,7 @@ body {
 
 /* 表格 相关----------------------------------------------------*/
 .result-table-wrapper {
+    min-width: 80%;
     max-width: 1000px; /* 限制最大宽度 */
     max-height: 600px; /* 限制最大高度 */
     overflow-x: auto; /* 允许横向滚动 */
@@ -355,7 +356,7 @@ body {
 }
 
 #result-table {
-    width: 150%; /* 自动适应内容宽度 */
+    width: 120%; /* 自动适应内容宽度 */
     table-layout: auto; /* 根据内容调整列宽 */
 }
 
@@ -405,7 +406,7 @@ body {
     bottom: 20px;      /* 距离底部20px */
     text-align: right; /* 文本右对齐 */
     font-size: 12px;   /* 小字号 */
-    color: #30323C;       /* 灰色文字 */
+    color: #7d8092;       /* 灰色文字 */
     font-family: Arial, sans-serif; /* 可选字体 */
     z-index: 100;      /* 确保在最上层 */
     white-space: nowrap; /* 防止换行 */
@@ -417,7 +418,7 @@ body {
 }
 
 #footer p a {
-    color: #30323C;    /* 链接颜色 */
+    color: #7d8092;    /* 链接颜色 */
     text-decoration: none; /* 去掉下划线 */
     margin-left: 5px;  /* 链接左边距 */
 }

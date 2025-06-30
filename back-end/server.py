@@ -320,6 +320,8 @@ def delete_file():
         return {'error': f'File {filename} not found'}, 404
 
 if __name__ == '__main__':
-    if not os.path.exists(LITERATURE_FOLDER):
-        os.makedirs(LITERATURE_FOLDER)
+    for folder in ['literature', 'results']:
+        folder_path = os.path.join(BASE_DIR, folder)
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
     app.run(host='0.0.0.0', port=5002, debug=True)
