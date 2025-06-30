@@ -1,11 +1,5 @@
 # paper-web PRD
 
-
-
-产品原型：https://www.figma.com/design/UUYsFPwTdoOaeaEfM15Lb3/paper_web?node-id=0-1&t=qJp2QApkHjxpfVau-1
-
-
-
 ### 项目背景
 
 在科研的前期往往需要阅读大量文献，形成自己对于一个领域的基本认识，从而找出研究中的空白，立足自己的研究。本项目源自同门的科研需求，想要将自己从WoS等网站上下载的近百篇文献整理为表格，提取出其中的“数据源”、“研究方法”等近30个字段，从而定义研究空白，完成一篇系统性研究综述。
